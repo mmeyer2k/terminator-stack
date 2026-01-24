@@ -1,3 +1,4 @@
+FROM node:22 AS node
 FROM dunglas/frankenphp:1.11-php8.5.2-trixie
 
 ARG WWWUSER=sail
@@ -42,6 +43,13 @@ RUN chown -R ${WWWUSER}:${WWWUSER} /config/caddy /data/caddy /usr/local/bin/fran
 #COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 #COPY php.ini /etc/php/8.5/cli/conf.d/99-sail.ini
 #RUN chmod +x /usr/local/bin/start-container
+
+COPY --from=node /usr/local/bin/node /usr/local/bin
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/bin/node /usr/local/bin/nodejs
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+RUN npm --global install yarn
 
 EXPOSE 80/tcp
 EXPOSE 443/tcp

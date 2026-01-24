@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 class TestCommand extends Command
@@ -26,7 +27,6 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        Redis::incr('test_command_executions');
-        $this->info(Redis::get('test_command_executions'));
+
     }
 }

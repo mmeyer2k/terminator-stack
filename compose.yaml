@@ -3,8 +3,6 @@ services:
         build:
             context: './'
             dockerfile: Dockerfile
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
         ports:
             - '80:80/tcp'
             - '443:443/tcp'
@@ -14,8 +12,6 @@ services:
         command: php artisan octane:start --host=localhost --port=443 --admin-port=2019 --https --http-redirect
         volumes:
             - '.:/app'
-        networks:
-            - sail
         depends_on:
             - mysql
             - redis
@@ -33,10 +29,7 @@ services:
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
             MYSQL_EXTRA_OPTIONS: '${MYSQL_EXTRA_OPTIONS:-}'
         volumes:
-            - 'sail-mysql:/var/lib/mysql'
             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
-        networks:
-            - sail
         healthcheck:
             test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${DB_PASSWORD}"]
             retries: 3
@@ -45,10 +38,6 @@ services:
         image: 'redis:alpine'
         ports:
             - '${FORWARD_REDIS_PORT:-6379}:6379'
-        volumes:
-            - 'sail-redis:/data'
-        networks:
-            - sail
         healthcheck:
             test: ["CMD", "redis-cli", "ping"]
             retries: 3
@@ -58,13 +47,6 @@ services:
         ports:
             - '${FORWARD_MAILPIT_PORT:-1025}:1025'
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
-        networks:
-            - sail
 networks:
     sail:
         driver: bridge
-volumes:
-    sail-mysql:
-        driver: local
-    sail-redis:
-        driver: local
