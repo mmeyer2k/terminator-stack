@@ -3,15 +3,16 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Redis;
 
-class SendEmails extends Command
+class TestCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:send-emails';
+    protected $signature = 'app:test-command';
 
     /**
      * The console command description.
@@ -25,6 +26,7 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        //
+        Redis::incr('test_command_executions');
+        $this->info(Redis::get('test_command_executions'));
     }
 }

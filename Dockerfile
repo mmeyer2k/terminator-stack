@@ -22,6 +22,10 @@ RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/
 
 RUN docker-php-ext-install pdo_mysql pcntl
 
+RUN pecl install mongodb && docker-php-ext-enable mongodb
+
+RUN pecl install redis && docker-php-ext-enable redis
+
 RUN useradd ${WWWUSER}
 
 # Add additional capability to bind to port 80 and 443
