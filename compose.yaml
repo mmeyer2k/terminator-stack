@@ -1,5 +1,5 @@
 services:
-    laravel.test:
+    laravel:
         build:
             context: './'
             dockerfile: Dockerfile
@@ -9,7 +9,7 @@ services:
             - '443:443/udp'
         environment:
             LARAVEL_SAIL: 1
-        command: php artisan octane:start --host=localhost --port=443 --admin-port=2019 --https --http-redirect
+        command: php artisan octane:start --host=localhost --port=443 --admin-port=2019 --https --http-redirect --watch
         volumes:
             - '.:/app'
         depends_on:
@@ -36,8 +36,7 @@ services:
             timeout: 5s
     redis:
         image: 'redis:alpine'
-        ports:
-            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        command: redis-server --appendonly no --save 0 --maxmemory 50M --maxmemory-policy lru-volatile
         healthcheck:
             test: ["CMD", "redis-cli", "ping"]
             retries: 3

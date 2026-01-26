@@ -51,6 +51,8 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 RUN npm --global install yarn
 
+RUN npm install -g chokidar
+
 EXPOSE 80/tcp
 EXPOSE 443/tcp
 EXPOSE 443/udp
