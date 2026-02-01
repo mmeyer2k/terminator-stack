@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'server' => env('OCTANE_SERVER', 'roadrunner'),
+    'server' => env('OCTANE_SERVER', 'frankenphp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -135,7 +135,8 @@ return [
     ],
 
     'flush' => [
-        //
+        //\Illuminate\Support\Facades\Auth::class,
+        //\Illuminate\Support\Facades\Session::class,
     ],
 
     /*

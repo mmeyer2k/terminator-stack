@@ -36,7 +36,7 @@ services:
             timeout: 5s
     redis:
         image: 'redis:alpine'
-        command: redis-server --appendonly no --save 0 --maxmemory 50M --maxmemory-policy lru-volatile
+        command: 'redis-server --appendonly ${REDIS_APPENDONLY} --save 0 --maxmemory ${REDIS_MAXMEMORY} --maxmemory-policy ${REDIS_MAXMEMORY_POLICY}'
         healthcheck:
             test: ["CMD", "redis-cli", "ping"]
             retries: 3

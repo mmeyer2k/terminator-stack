@@ -1,4 +1,4 @@
-@servers(['production' => ['user@127.0.0.1']])
+@servers(['production' => ['deploy@your-server.com']])
 
 @task('deploy', ['on' => 'production'])
 
