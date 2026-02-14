@@ -7,15 +7,14 @@ services:
             - '80:80/tcp'
             - '443:443/tcp'
             - '443:443/udp'
-        environment:
-            LARAVEL_SAIL: 1
-        command: php artisan octane:start --host=localhost --port=443 --admin-port=2019 --https --http-redirect --watch
+        command: 'php artisan octane:start --host=localhost --port=443 --admin-port=2019 --https --http-redirect --watch'
         volumes:
             - '.:/app'
         depends_on:
             - mysql
             - redis
             - mailpit
+        restart: unless-stopped
     mysql:
         image: 'mariadb:12.1.2'
         ports:
@@ -34,6 +33,7 @@ services:
             test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${DB_PASSWORD}"]
             retries: 3
             timeout: 5s
+        restart: unless-stopped
     redis:
         image: 'redis:alpine'
         command: 'redis-server --appendonly ${REDIS_APPENDONLY} --save 0 --maxmemory ${REDIS_MAXMEMORY} --maxmemory-policy ${REDIS_MAXMEMORY_POLICY}'
@@ -41,6 +41,36 @@ services:
             test: ["CMD", "redis-cli", "ping"]
             retries: 3
             timeout: 5s
+        restart: unless-stopped
+    queue:
+        build:
+            context: './'
+            dockerfile: Dockerfile
+        command: 'php artisan queue:work database --sleep=3 --tries=3 --max-jobs=1000 --max-time=3600 --memory=256 --timeout=1800'
+        stop_grace_period: 330s
+        volumes:
+            - '.:/app'
+        networks:
+            - sail
+        depends_on:
+            - mysql
+            - redis
+        restart: unless-stopped
+    scheduler:
+        build:
+            context: './'
+            dockerfile: Dockerfile
+        environment:
+            LARAVEL_SAIL: 1
+        command: 'php artisan schedule:work'
+        volumes:
+            - '.:/app'
+        networks:
+            - sail
+        depends_on:
+            - mysql
+            - redis
+        restart: unless-stopped
     mailpit:
         image: 'axllent/mailpit:latest'
         ports:
